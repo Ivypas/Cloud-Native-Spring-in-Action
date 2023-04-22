@@ -16,6 +16,10 @@ repositories {
     maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
 }
 
+bootRun {
+    systemProperty 'spring.profiles.active', 'testdata'
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
