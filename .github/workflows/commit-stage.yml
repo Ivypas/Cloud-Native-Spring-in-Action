@@ -2,60 +2,34 @@ name: Commit Stage
 on: push
 
 jobs:
-  # ❶ The job’s unique identifier
   build:
-    # ❸ A human-friendly name for the job
     name: Build and Test
-    # ❷ The type of machine where the job should be run
     runs-on: ubuntu-22.04
-    # ❹ The permissions granted to the job
     permissions:
-      # ❺ Permission to check out the current Git repository
       contents: read
-      # ❻ Permission to submit security events to GitHub
       security-events: write
-
     steps:
       - name: Checkout source code
-        # ❶ Checks out the current Git repository (catalog-service)
         uses: actions/checkout@v3
-
       - name: Set up JDK
-        # ❷ Installs and configures a Java runtime
         uses: actions/setup-java@v3
-        # ❸ Defines which version, distribution, and cache type to use
         with:
           distribution: temurin
           java-version: 17
           cache: gradle
-
-      - name: Code vulnerability scanning
-        # ❹ Scans the codebase for vulnerabilities using grype
-        uses: anchore/scan-action@v3
-        # ❺ Assigns an identifier to the current step so that it can be referenced from subsequent steps
-        id: scan
-        with:
-          # ❻ The path to the checked-out repository
-          path: "${{ github.workspace }}"
-          # ❼ Whether to fail the build in the event of security vulnerabilities
-          fail-build: false
-          # ❽ The minimum security category to be considered as an error (low, medium, high, critical)
-          severity-cutoff: high
-          # ❾ Whether to enable the generation of a report after the scan is completed
-          acs-report-enable: true
-
-      - name: Upload vulnerability report
-        # ❿ Uploads the security vulnerability report to GitHub (SARIF format)
-        uses: github/codeql-action/upload-sarif@v2
-        # ⓫ Uploads the report even if the previous step fails
-        if: success() || failure()
-        with:
-          # ⓬ Fetches the report from the output of the previous step
-          sarif_file: ${{ steps.scan.outputs.sarif }}
-
       - name: Build, unit tests and integration tests
-        # ⓭ Ensures the Gradle wrapper is executable, solving Windows incompatibilities
-        # ⓮ Runs the Gradle build task, which compiles the codebase and runs unit and integration tests
         run: |
           chmod +x gradlew
           ./gradlew build
+      - name: Code vulnerability scanning
+        uses: anchore/scan-action@v3
+        id: scan
+        with:
+          path: "${{ github.workspace }}"
+          fail-build: false
+          severity-cutoff: high
+      - name: Upload vulnerability report
+        uses: github/codeql-action/upload-sarif@v2
+        if: success() || failure()
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
