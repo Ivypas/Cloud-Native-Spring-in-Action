@@ -10,9 +10,6 @@ server:
 spring:
   application:
     name: catalog-service
-  sql:
-    init:
-      mode: always
   datasource:
     username: user
     password: password
