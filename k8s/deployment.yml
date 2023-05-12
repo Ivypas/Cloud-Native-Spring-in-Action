@@ -15,8 +15,13 @@ spec:
     spec:
       containers:
         - name: catalog-service
-          image: ghcr.io/ivypas/catalog-service:latest
+          #image: ghcr.io/ivypas/catalog-service:latest
+          image: catalog-service
           imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh","-c","sleep 5"]
           ports:
             - containerPort: 9001
           env:
