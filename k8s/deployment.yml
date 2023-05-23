@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: catalog-service
-          #image: ghcr.io/ivypas/catalog-service:latest
-          image: catalog-service
+          # gradle bootBuildImage --imageName local/ivypas/catalog-service:chapter7
+          image: local/ivypas/catalog-service:chapter7
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:

@@ -13,6 +13,11 @@ if os.name == "nt":
 # 1. Build
 custom_build(
     # Name of the container image
+    # 1.0 在 k8s/deployment.yml 中写全容器全限定名 local/ivypas/catalog-service:chapter7
+    # 1.1 在根目录手动构建镜像，执行 bootBuildImage --imageName local/ivypas/catalog-service:chapter7
+    # 1.2 在宿主机构建好镜像后，执行 minikube image load 将镜像移进 minikube
+    # 1.3 此时 Tiltfile 中的容器名若写成 catalog-service 就可以跳过 build 步骤，直接使用刚才挪进去的镜像，
+    #     而不用在 minikube 内拉取 paketobuildpack，所以不要写 local/ivypas/catalog-service:chapter7
     ref = 'catalog-service',
     # Command to build the container image
     command = gradlew + ' bootBuildImage --imageName ' + expected_ref,
